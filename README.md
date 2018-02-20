@@ -36,4 +36,6 @@ Once you have completed all tasks in the unit, please complete the [knowledge ch
 ## Additional Materials
 [iGraph. (2016). Get Started with R iGraph](http://igraph.org/r/#docs)
 
+[Social Network Analysis with R - Examples](https://www.youtube.com/watch?v=0xsM0MbRPGE)
+
 
