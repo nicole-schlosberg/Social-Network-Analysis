@@ -12,13 +12,7 @@ Social network anlaysis has found utility is institutional, classroom and analys
 
 In this unit you will be working towards building several social network diagrams (graphs/sociograms) of a school classroom and then analyzing both centrality measures and clusters within the network. As background to this task please read over the follwing materials and watch the methodological videos. If you find any other useful materials please add them under Additional Materials at the end of the this page and pull request the change back to this repo.
 
-## Readings
-
-[Bakharia, A., & Dawson, S. (2011). SNAPP: A Bird’S-eye View of Temporal Participant Interaction. In Proceedings of the 1st International Conference on Learning Analytics and Knowledge (pp. 168–173). Banff, Alberta, Canada:ACM.](https://doi.org/10.1145/2090116.2090144)
-
-[Hanneman, R. & Riddle, M. (2005). Introduction to Social Network Methods. Riverside, CA:  University of California, Riverside](http://faculty.ucr.edu/~hanneman/)  
-  * [Chapter 10: Centrality & Power](http://faculty.ucr.edu/~hanneman/nettext/C10_Centrality.html)  
-  * [Chapter 11: Cliques & Subgroups](http://faculty.ucr.edu/~hanneman/nettext/C11_Cliques.html)  
+## Resources
 
 ## Videos
 
@@ -37,5 +31,15 @@ Once you have completed all tasks in the unit, please complete the [knowledge ch
 [iGraph. (2016). Get Started with R iGraph](http://igraph.org/r/#docs)
 
 [Social Network Analysis with R - Examples](https://www.youtube.com/watch?v=0xsM0MbRPGE)
+
+### Readings
+
+[Bakharia, A., & Dawson, S. (2011). SNAPP: A Bird’S-eye View of Temporal Participant Interaction. In Proceedings of the 1st International Conference on Learning Analytics and Knowledge (pp. 168–173). Banff, Alberta, Canada:ACM.](https://doi.org/10.1145/2090116.2090144)
+
+[Hanneman, R. & Riddle, M. (2005). Introduction to Social Network Methods. Riverside, CA:  University of California, Riverside](http://faculty.ucr.edu/~hanneman/)  
+  * [Chapter 10: Centrality & Power](http://faculty.ucr.edu/~hanneman/nettext/C10_Centrality.html)  
+  * [Chapter 11: Cliques & Subgroups](http://faculty.ucr.edu/~hanneman/nettext/C11_Cliques.html)  
+
+
 
 
