@@ -24,6 +24,8 @@ You have a data set for each of these questions, please complete the following t
 
 Manipulate each of the data sets so that it is suitable for building a social network using iGraph.
 
+*If you have not previously taken HUDK4050 please sign up for office hours before you attempt this project*
+
 ```{r}
 
 ```
@@ -97,5 +99,9 @@ Find the cutpoints (articulation points) for each of the three networks you gene
 ## Putting it all together
 
 Write a narrative description of the social ties among members of this 7th grade class using the network, centrality and structural metrics you have developed. Can you provide any recommendations to the teacher of this class based on your analysis? What other information would you want to know? Can you remeber being in seventh grade, does this refelct your experience?
+
+## Test out your skills
+
+Find another data set that interests you on the ([ICON](https://icon.colorado.edu/#!/)) website. Load the data into igraph, visualize the graph and use one of the metrics you have learned to characterize structures within the graph.
 
 ```{r}
