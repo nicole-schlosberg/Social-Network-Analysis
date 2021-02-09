@@ -1,8 +1,7 @@
 ---
 title: "HUDK4051: Social Network Analysis"
-author: "Charles Lang"
-date: "1/26/2018"
-output: html_document
+author: "Nicole Schlosberg"
+date: "2/1/2021"
 ---
 
 In this assignment you will be generating and analyzing three social networks (also known as graphs or sociograms) based on three different measures. You will be using data from:
@@ -20,6 +19,7 @@ The data were collected by Vickers & Chan from 29 seventh grade students in a sc
 
 You have a data set for each of these questions, please complete the following tasks.
 
+
 ## Data Wrangling
 
 Manipulate each of the data sets so that it is suitable for building a social network using iGraph.
@@ -27,81 +27,296 @@ Manipulate each of the data sets so that it is suitable for building a social ne
 *If you have not previously taken HUDK4050 please sign up for office hours before you attempt this project*
 
 ```{r}
+#Load packages
+library(tidyr)
+library(dplyr)
 
+#Read in .csv files
+B1 <- read.csv("best.friends.csv", header = TRUE)
+G1 <- read.csv("get.on.with.csv", header = TRUE)
+W1 <- read.csv("work.with.csv", header = TRUE)
+
+#Manipulating B1 dataset
+B1$to <- as.factor(B1$to)
+B1$from <- as.factor(B1$from)
+B2 <- select(B1, to, from)
+EDGEb <- count(B2, to, from)
+names(EDGEb) <- c("to", "from","count")
+Vb.FROM <- select(B1, from, gender.from) 
+Vb.TO <- select(B1, to)
+names(Vb.FROM) <- c("id", "gender.from")
+names(Vb.TO) <- c("id")
+lvls <- sort(union(levels(Vb.FROM$id), levels(Vb.TO$id))) #union is like join but just for a vector
+VERTEXb <- full_join(mutate(Vb.FROM, id=factor(id, levels=lvls)),
+    mutate(Vb.TO, id=factor(id, levels=lvls)), by = "id")
+VERTEXb$gender.from <- ifelse(is.na(VERTEXb$gender.from) == TRUE, as.factor(as.character(VERTEXb$gender.to)), as.factor(as.character(VERTEXb$gender.from)))
+names(VERTEXb) <- c("id", "gender")
+VERTEXb <- unique(VERTEXb)
+
+#Manipulating G1 dataset
+G1$to <- as.factor(G1$to)
+G1$from <- as.factor(G1$from)
+G2 <- select(G1, to, from)
+EDGEg <- count(G2, to, from)
+names(EDGEg) <- c("to", "from","count")
+Vg.FROM <- select(G1, from, gender.from) 
+Vg.TO <- select(G1, to)
+names(Vg.FROM) <- c("id", "gender.from")
+names(Vg.TO) <- c("id")
+lvls <- sort(union(levels(Vg.FROM$id), levels(Vg.TO$id))) #union is like join but just for a vector
+VERTEXg <- full_join(mutate(Vg.FROM, id=factor(id, levels=lvls)),
+    mutate(Vg.TO, id=factor(id, levels=lvls)), by = "id")
+VERTEXg$gender.from <- ifelse(is.na(VERTEXg$gender.from) == TRUE, as.factor(as.character(VERTEXg$gender.to)), as.factor(as.character(VERTEXg$gender.from)))
+names(VERTEXg) <- c("id", "gender")
+VERTEXg <- unique(VERTEXg)
+
+#Manipulating W1 dataset
+W1$to <- as.factor(W1$to)
+W1$from <- as.factor(W1$from)
+W2 <- select(W1, to, from)
+EDGEw <- count(W2, to, from)
+names(EDGEw) <- c("to", "from","count")
+Vw.FROM <- select(W1, from, gender.from) #select all the froms together
+Vw.TO <- select(W1, to)
+names(Vw.FROM) <- c("id", "gender.from")
+names(Vw.TO) <- c("id")
+lvls <- sort(union(levels(Vw.FROM$id), levels(Vw.TO$id))) #union is like join but just for a vector
+VERTEXw <- full_join(mutate(Vw.FROM, id=factor(id, levels=lvls)),
+    mutate(Vw.TO, id=factor(id, levels=lvls)), by = "id")
+VERTEXw$gender.from <- ifelse(is.na(VERTEXw$gender.from) == TRUE, as.factor(as.character(VERTEXw$gender.to)), as.factor(as.character(VERTEXw$gender.from)))
+names(VERTEXw) <- c("id", "gender")
+VERTEXw <- unique(VERTEXw)
 ```
+
 
 ## Visualize the Networks
 
-Create a graph for each of the data sets, are the graphs directed or undirected? Visualize each of the graphs you have created and color the nodes according to gender. Save pdfs of your graphs in this directory for upload to Github.
+Create a graph for each of the data sets, are the graphs directed or undirected? 
+ANSWER: The graphs are directed because they are to and from the students.
 
+Visualize each of the graphs you have created and color the nodes according to gender. Save pdfs of your graphs in this directory for upload to Github.
 ```{r}
+#Load the igraph package
+library(igraph) 
 
+#Who are your best friends in the class? 
+b <- graph.data.frame(EDGEb, directed=TRUE, vertices=VERTEXb) 
+#Now we can plot our graph using the force directed graphing technique - our old friend Fruchertman-Reingold! and color the nodes according to gender.
+plot(b,layout=layout.fruchterman.reingold, vertex.color=VERTEXb$gender)
+
+#Who do you get on with in the class?
+g <- graph.data.frame(EDGEg, directed=TRUE, vertices=VERTEXg) 
+#Now we can plot our graph using the force directed graphing technique - our old friend Fruchertman-Reingold! and color the nodes according to gender.
+plot(g,layout=layout.fruchterman.reingold, vertex.color=VERTEXg$gender)
+
+#Who would you prefer to work with? 
+w <- graph.data.frame(EDGEw, directed=TRUE, vertices=VERTEXw) 
+#Now we can plot our graph using the force directed graphing technique - our old friend Fruchertman-Reingold! and color the nodes according to gender.
+plot(w,layout=layout.fruchterman.reingold, vertex.color=VERTEXw$gender)
 ```
+
 
 ## Centrality Measures
 
 Who in the class has the highest degree centrality for each measure?
 ```{r}
+#Who are your best friends in the class? 
+#Highest Degree Centrality: Student 8
+sort(degree(b),decreasing=TRUE)
 
+#Who do you get on with in the class? 
+#Highest Degree Centrality: Student 11
+sort(degree(g),decreasing=TRUE)
+
+#Who would you prefer to work with? 
+#Highest Degree Centrality: Student 6
+sort(degree(w),decreasing=TRUE)
 ```
 
 Does **degree centrality** mean the same thing for each of your networks? Does it make sense for each of your networks?
 
+ANSWER: Degree centrality means the number of edges or connectors each node has. It shows an individuals node connectiveness within its local environment. If looking at an individual student, those with the most edges connected to it, or highest degree centrality, would represent someone who likable or wanted to be around in all three networks (best friends, gets on with, work with). For best friends other factors likely comes into play such as popularity, gets on with and works with represents someone who is more kind or smart or something along those lines. But degree centrality for all three networks likely measures a factor of likability, but that likeability might have a different characterization among the networks based on context.
+
 Who in the class has the highest closeness centrality?
-
 ```{r}
+#Who are your best friends in the class? 
+#Highest Closeness Centrality: Student 21
+sort(closeness(b),decreasing=TRUE)
 
+#Who do you get on with in the class? 
+#Highest Closeness Centrality: Student 14
+sort(closeness(g),decreasing=TRUE)
+
+#Who would you prefer to work with? 
+#Highest Closeness Centrality: Student 16 but closeness is not well-defined for disconnected graphs
+sort(closeness(w),decreasing=TRUE)
 ```
 
 How does **betweeness centrality** differ from degree centrality? Is one more useful than the other? Does their utility differ between your three networks?
+```{r}
+#Who are your best friends in the class? 
+#Highest Betweeness Centrality: Student 28
+sort(betweenness(b),decreasing=TRUE)
+
+#Who do you get on with in the class? 
+#Highest Betweeness Centrality: Student 11
+sort(betweenness(g),decreasing=TRUE)
+
+#Who would you prefer to work with? 
+#Highest Betweeness Centrality: Student 11
+sort(betweenness(w),decreasing=TRUE)
+```
+
+ANSWER: Betweeness centrality tries to capture the node's role as a connector or bridge between other nodes or other groups of nodes. Degree centrality differs as it captures what is locally around the node not where the node lies within the entire network. To answer whether it is more useful than the other would be to ask useful for what? Each measure is good for something else so betweenenss would be better for looking at which individual is connected or bridges groups of other node's. Could that person be influencial in multiple groups. With all three networks betweeness shows who connects different groups or individuals within the class (whether that is best friends, gets on with, or works with), while degree centrality would be good for understanding an individuals connection to the other nodes immediately connected to it.
+
 
 ## Simple structures
 
 Count the number of dyads and the number and type of triads using the following commands.
 ```{r}
-dyad_census()
+#Mutual means that each connected node is back and forth, while asymmetrical means that it is only one direction. Null dyads mean that they are not connected.
+
+#Who are your best friends in the class? 55 mutual, 71 asymmetrical, and 280 null dyads. 
+dyad_census(b)
+
+#Who do you get on with in the class? 121 mutual, 119 asymmetrical, and 166 null dyads. 
+dyad_census(g)
+
+#Who would you prefer to work with? 46 mutual, 106 asymmetrical, and 254 null dyads. 
+dyad_census(w)
 ```
 [Documentation](http://igraph.org/r/doc/dyad_census.html)
-
 ```{r}
-triad_census()
+#Who are your best friends in the class? 
+#1297 empty graphs,  791 single directed edge,  746 mutual connections between two vertices,  26 out-star, 118 in-star, 75 directed line, 214 A<->B<-C, 123 A<->B->C, 34 A->B<-C, A->C, 2 A<-B<-C, A->C, 39 A<->B<->C, 38 A<-B->C, A<->C, 59 A->B<-C, A<->C, 3 A->B->C, A<->C, 43 A->B<->C, A<->C, and 46 complete graph.
+triad_census(b)
+
+#Who do you get on with in the class? 
+#329 empty graphs,  510 single directed edge,  632 mutual connections between two vertices,  55 out-star, 186 in-star, 88 directed line, 432 A<->B<-C, 235 A<->B->C, 97 A->B<-C, A->C, 8 A<-B<-C, A->C, 215 A<->B<->C, 120 A<-B->C, A<->C, 193 A->B<-C, A<->C, 75 A->B->C, A<->C, 287 A->B<->C, A<->C, and 192 complete graph.
+triad_census(g)
+
+#Who would you prefer to work with? 
+#1022 empty graphs,  999 single directed edge,  528 mutual connections between two vertices,  116 out-star, 187 in-star, 132 directed line, 177 A<->B<-C, 108 A<->B->C, 88 A->B<-C, A->C, 0 A<-B<-C, A->C, 18 A<->B<->C, 81 A<-B->C, A<->C, 102 A->B<-C, A<->C, 19 A->B->C, A<->C, 40 A->B<->C, A<->C, and 37 complete graph.
+triad_census(w)
 ```
 [Documentation](http://igraph.org/r/doc/triad_census.html)
 
 Do these metrics tell you anything about the networks? If so what?
+
+ANSWER: These metrics give us an understanding of what the individual connections between the nodes are composed of. How many are mutually connected, how many are one directionly connect etc. It is a break down of the triple vertices of different subgraphs within the larger network. Thus it these metrics simply give us an understanding of the composition of the network. 
+
 
 ## Cliques
 
 Answer the following questions using the [clique functions](http://igraph.org/r/doc/cliques.html)
 
 What is the size of the largest clique(s) in each of the three networks?
-
 ```{r}
-
+#clique_num calculates the size of the largest clique(s)
+clique_num(b) #7
+clique_num(g) #12
+clique_num(w) #9
 ```
 
 Which nodes/vertices are in the largest cliques for the three networks? Is there much overlap?
-
 ```{r}
-
+#largest_cliques finds all largest cliques in the input graph. A clique is largest if there is no other clique including more vertices
+largest_cliques(b) #8 11 13 14 15 16 19 20 21 22 23; Yes there is overlap between all cliques (22, 14, 21) - 3 out of 7
+#23 14 15 19 20 21 22
+#23 14 15 16 20 21 22
+#8  15 16 21 14 20 22
+#8  11 22 14 20 21 16
+#8  11 22 14 20 21 13
+largest_cliques(g) # 8 11 13 14 15 16 19 20 21 22 23 24 26 27; Yes there is a ton of overlap between all cliques (11, 14, 22, 15, 19, 20, 23, 13, 24) - 9 out of 12
+#8  11 27 15 13 24 23 20 14 19 22 26
+#8  11 27 15 13 24 23 20 14 19 22 21
+#8  11 22 14 16 19 15 20 26 13 23 24
+#8  11 22 14 16 19 15 20 21 23 13 24
+largest_cliques(w) #6 8 11 14 15 15 19 20 21 22 23; Yes lots of overlap between all cliques (16, 14, 20, 21, 22, 23) - 6 out of 9
+#6  15 16 14 19 23 20 21 22
+#6  8  16 14 19 20 21 22 23
+#6  8  16 14 11 20 21 22 23
 ```
 
 How many **maximal cliques** are there in each of the networks?
-
 ```{r}
-
+#count_max_cliques counts the maximal cliques
+count_max_cliques(b) #35
+count_max_cliques(g) #64
+count_max_cliques(w) #36
 ```
+
 
 ## Components & Cutpoints
 
-Find the cutpoints (articulation points) for each of the three networks you generated. What does this tell you about the graphs? Does what you find match a visual exploration of the networks?
+Find the cutpoints (articulation points) for each of the three networks you generated. 
+```{r}
+#Who are your best friends in the class? 
+#Student 13
+articulation_points(b)
+
+#Who do you get on with in the class? 
+#None
+articulation_points(g)
+
+#Who would you prefer to work with? 
+#Student 13
+articulation_points(w)
+```
+What does this tell you about the graphs? Does what you find match a visual exploration of the networks?
+
+ANSWER: An articulation point (cutpoint) is a node that if removed breaks a connection between other groups within the network. In other words, it is a node that would fracture an integrated network into separate components. It is visually seen within the best friends network and the prefer to work with network as in both networks Student 13 connects Student 18 and Student 25 to the rest of the class.
+
 
 ## Putting it all together
 
-Write a narrative description of the social ties among members of this 7th grade class using the network, centrality and structural metrics you have developed. Can you provide any recommendations to the teacher of this class based on your analysis? What other information would you want to know? Can you remeber being in seventh grade, does this refelct your experience?
+Write a narrative description of the social ties among members of this 7th grade class using the network, centrality and structural metrics you have developed. Can you provide any recommendations to the teacher of this class based on your analysis? What other information would you want to know? Can you remember being in seventh grade, does this reflect your experience?
+
+ANSWER: Lets start with Students 18 and 25. They are best friends and prefer to work with each other. They are also mutual each best friends with 13, but 13 does not prefer to work with them. 18 and 25 are separate from their classmates with 13 connecting, 13 is their articulation point. The student with the highest betweeness or bridger of best friends is Student 28. The student that connects groups through others getting on with and wanting to work with is Student 11.  The degree centrality or one with the most connections via getting on with others in the class is Student 11. Student 11 is in all of the largest cliques within each network. From what I remember about 7th grade, there was always someone who was a floater (Student 11). They got along with everyone, and everyone wanted to hang around them. Essentially, they were not cliquie and connected all the different cliques because they could navigate socially. Also there is always a two or three students that kind of hang back by themselves and get along with a couple of the other students but typically are alone, such as Student 18 and 25.
+
 
 ## Test out your skills
 
 Find another data set that interests you on the ([ICON](https://icon.colorado.edu/#!/)) website. Load the data into igraph, visualize the graph and use one of the metrics you have learned to characterize structures within the graph.
-
 ```{r}
+#Load packages
+library(tidyr)
+library(dplyr)
+library(igraph) 
+
+#Read in .csv file
+I1 <- read.csv("stormofswords.csv", header = TRUE)
+names(I1) <- c("from", "to", "count")
+
+#Manipulating I1 dataset
+I1$to <- as.factor(I1$to)
+I1$from <- as.factor(I1$from)
+I2 <- select(I1, from, to)
+EDGE <- select(I1, from, to, count)
+V.FROM <- select(I1, from) 
+V.TO <- select(I1, to)
+names(V.FROM) <- c("id")
+names(V.TO) <- c("id")
+lvls <- sort(union(levels(V.FROM$id), levels(V.TO$id))) 
+VERTEX <- full_join(mutate(V.FROM, id=factor(id, levels=lvls)),
+    mutate(V.TO, id=factor(id, levels=lvls)), by = "id")
+names(VERTEX) <- c("id")
+VERTEX <- unique(VERTEX)
+
+#Graph with igraph
+i <- graph.data.frame(EDGE, directed=TRUE, vertices=VERTEX) 
+plot(i,layout=layout.fruchterman.reingold, vertex.size=10, vertex.label.cex=.5,
+     vertex.label.color="black",vertex.label.font=2,edge.width=EDGE$count*.04, edge.color= "dark grey",edge.arrow.size=0.4, edge.arrow.width=2, edge.curved=TRUE)
+
+#Betweeness centrality ranks the characters based on how much of a bridge or connector between other characters one node is. In other words who interacts with who and are there any characters that interactions bridge groups of characters.
+sort(betweenness(i),decreasing=TRUE)
+#Plotting with betweeness centrality for a visual
+plot(i,layout=layout.fruchterman.reingold, vertex.size=10, vertex.label.cex=.5,
+     vertex.label.color="black",vertex.label.font=2,edge.width=EDGE$count*.04, edge.color= "dark grey",edge.arrow.size=0.4, edge.arrow.width=2, edge.curved=TRUE, vertex.color = ifelse(betweenness(i) >= 300, c( "pink"), ifelse(betweenness(i) >= 200, c("yellow"), ifelse(betweenness(i) >= 100, c( "blue"), ifelse(betweenness(i) > 0, c("red"), ifelse(betweenness(i) == 0,c("purple"),c("black")))))))
+
+#Degree centrality in this network represents the number of characters that each interacts with. 
+sort(degree(i),decreasing=TRUE)
+#Plotting with degree dentrality for a visual
+plot(i,layout=layout.fruchterman.reingold, vertex.size=10, vertex.label.cex=.5,
+     vertex.label.color="black",vertex.label.font=2,edge.width=EDGE$count*.04, edge.color= "dark grey",edge.arrow.size=0.4, edge.arrow.width=2, edge.curved=TRUE, vertex.color=ifelse(degree(i) >= 30, c( "pink"), ifelse(degree(i) >= 20, c("yellow"), ifelse(degree(i) >= 10, c( "blue"), ifelse(degree(i) >= 5, c("red"), ifelse(degree(i) >= 2,c("purple"), ifelse(degree(i) >= 1,c("orange"))))))))
+```
