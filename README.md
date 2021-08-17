@@ -10,7 +10,7 @@ Social network anlaysis has found utility is institutional, classroom and analys
 * Be able to apply and interpret a range of centrality measures to a network
 * Be able to apply and interpret a range of clustering procedures to a network
 
-## Resources
+## Utilized the following resources
 
 ## Videos
 
