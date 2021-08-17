@@ -4,17 +4,17 @@ Social network anlaysis has found utility is institutional, classroom and analys
 
 Worked towards building several social network diagrams (graphs/sociograms) of a school classroom and then analyzing both centrality measures and clusters within the network.
 * Best Friend Social-Network
-![Best Friend Social-Network](BestFriends.pdf)
+![Best Friend Social-Network](BestFriends.png)
 * Gets On With Social-Network
-![Gets On With Social-Network](GetOnWith.pdf)
+![Gets On With Social-Network](GetOnWith.png)
 
 Created a social network analysis for Game of Thrones data.
 * Social-Network
-![Social-Network](GameOfThronesNetwork.pdf)
+![Social-Network](GameOfThronesNetwork.png)
 * Betweenness
-![Betweenness](BetweennessGameOfThrones.pdf)
+![Betweenness](BetweennessGameOfThrones.png)
 * Degree
-![Degree](DegreeGameOfThrones.pdf)
+![Degree](DegreeGameOfThrones.png)
 
 
 ## Goals
